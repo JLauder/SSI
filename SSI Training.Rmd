@@ -1,0 +1,342 @@
+---
+title: "SSI R Training Course"
+author: "Jeff Lauder"
+date: "Friday, January 02, 2015"
+output: ioslides_presentation
+---
+##SSI R Training Course
+January 7th, 2015
+
+This course is a very basic introduction to R and its use in statistical
+analysis of SSI data. 
+
+
+##Introduction
+    What is R
+        -Extremely powerful Statistical software package, as well as 
+        code compiler
+        -Can run basic statistics within the base package, as well as
+        create your own "apps"
+        -Almost limitless as far as statistical power and program 
+        complexity
+        -Not the easiest to get into right off the bat (no interface)
+    What is R Studio
+        -"Shell" for R that provides an intuitive user interface.
+        -Provides buttons and windows for commonly used operations
+##Brief tour of R and R Studio
+    -R interface
+    -R Studio default interface
+    -Customizing R Studio (Tools->Global Options)
+    
+##Code
+    -Everything in R is "coded" or "scripted"
+    -R is based in the S computing language, with some basic concepts
+    and principles taken from Fortran and Basic, with multiple packages
+    that use other languages (Python, SQL, etc.)
+
+##Scripting
+    -Much like the old scientist's credo was to "record everything",
+    often in notebooks, everything done in R should be written out, into
+    a "script" that others, as well as R itself, can follow.
+    -Example:
+```{r}
+#1/2/2015
+#Comparison of three sets of random numbers
+#Generate 3 random number sets
+x1<-rnorm(99,35,3)
+x2<-rnorm(99,30,5)
+x3<-rnorm(99,28,7)
+```
+##Scripting
+```{r}
+#Plot histograms of each distribution
+hist(x1)
+hist(x2)
+hist(x3)
+
+#Step 2:
+#ANOVA of three random number sets
+```
+
+##Coding basics
+    Objects and labeling
+    -You can call anything by any name! Don't take labels too literally
+    -Be careful, however, of using funtions in names (R is a dumb program
+    that needs you to tell it what to do very explicitly)
+    -Extremely case sensitive!
+    -Annoyingly exact! (As with any coding language:
+    careful with commas, etc.)
+##Coding basics
+```{r}
+x<-10
+x
+
+my.number<-15
+my.number
+
+x<-15
+x
+
+The.meaning.of.life<-42
+The.meaning.of.life
+```
+##Coding basics
+    Symbology
+    -"<-" is same as "="
+    -Comments start with "#"
+    -Follows basic logical operators:> greater than, etc.
+    -Important logic rules: 
+    -== "exactly equals"
+    -!= "does not equal"
+    -&& and & "and"
+    -| and || "or"
+    Standards/Conventions
+    -Always indent major changes in code (e.g. functions, subsets, etc.)
+    -Use lots of "comments"
+##Coding basics
+    Basic functions: Base package
+```{r}
+#Generate Random number set
+x=rnorm(100,50,3)
+
+#Display histogram of random numbers
+hist(x)
+```
+##Coding basics
+```{r}
+#Calculate basic statistics
+mean(x)
+sd(x)
+median(x)
+
+#Or, use "summary()"
+summary(x)
+```
+##Coding basics
+Use new variable names to store results
+```{r}
+x.summary=summary(x)
+x.summary
+```
+##Coding basics
+    Basic functions: getting help
+```{r}
+?hist
+?aov
+?friedman.test
+```
+##Coding basics
+    Basic functions: Write your own
+    -Calculate square root of randomly generated number between 1 and 100,
+    then add the square root back to the original number
+    -Note: square root function = sqrt, and random number generation can be
+    done with "sample(1:100,1)"
+##Coding basics
+```{r}
+my.number<-sample(1:100,1)
+my.number2<-sqrt(my.number)
+my.number3<-my.number2+my.number
+my.number3
+```
+##Coding basics
+Nesting functions:
+```{r}
+my.number4<-(sqrt(my.number))+my.number
+my.number4
+```
+##Coding basics
+Be careful of what you are putting into your function:
+```{r}
+my.number5<-(sqrt(sample(1:100,1)))+(sample(1:100,1))
+my.number5
+```
+##Importing data
+    Example data: mammal trap data (Thanks Julia!)
+    Must reference current data location
+    Must be CSV file!
+    In R:
+```{r}
+mammals<-read.csv(file="E:/Documents/SSI/Projects/Mammals/All Data/Sheatsley2012.csv")
+mammals
+```
+##Importing data
+    R Studio:
+    -In "Environment" tab, click "import dataset". Make sure "header" is
+    checked.
+    -Can rename file within R studio.
+##Data frame versus data view within R
+    View() shows whole dataframe separately
+    Simply typing the dataset name shows the data within the R console
+    Now "view"" your dataset
+##Data formats
+    "Long"" format versus "short"" format
+##Sorting/Exploring Data
+    Join/Merge/bind
+    Useful for joining two datasets that are already same format
+```{r}
+mammals2<-read.csv(file="E:/Documents/SSI/Projects/Mammals/All Data/Sheatsley2013.csv")
+
+#mammals.all<-rbind(mammals,mammals2)
+#Gets error, extra notes column in mammals2 must be dropped
+```
+##Sorting continued
+    Can drop columns using matrix format by "subsetting":
+    Subsetting can be done one of two ways:
+    -Directly referencing the matrix format [row,column]
+    -Using the "subset" function
+    For these types of subsets (removing a column, former is easier)
+```{r}
+mammals2<-mammals2[,-12]
+
+mammals.all<-rbind(mammals,mammals2)
+#View(mammals.all)
+```
+##More on Subsetting   
+    Lets say we want to find only trap dates and locations with a certain 
+    species, we can do this with subset(dataframe,function)
+```{r}
+per.man<-subset(mammals.all,Species.code=="perman")
+per.man
+```
+##More on subsetting
+    Now we can use this subset to get basic information like total
+    capture counts
+    We can do this using the length(column name) function
+    When referencing a column, use "$"
+```{r}
+length(per.man$Trap)
+```
+    Or attach the dataset, but remember to detach
+```{r}
+attach(per.man)
+length(Trap)
+detach(per.man)
+```
+##Missing values
+    What do we do with NA or empty cells?
+    R interprets blanks as "0"
+    Sometimes can be confusing...
+    Example: sometimes may interpret a blank as 0, which will influence
+    statistics, whereas "NA" will not
+    *May* need to manually set blanks to "NA"
+##Missing values
+    Not always straightforward
+    Have to figure out what R is interpreting them as
+    *Don't be afraid to Google your problems!* Tons of info out there!
+```{r}
+mammals.all[is.na(mammals.all)]<-""
+```
+##Exploratory analysis
+```{r}
+#install.packages('reshape2')
+library(reshape2)
+mam.melt<-melt(mammals.all,id=c("SITE","DATE"),measure.vars="Species.code")
+mam.final<-subset(mam.melt,value!="x")
+freq.table<-table(mam.final$value)
+```
+
+##Exploratory analysis continued
+```{r}
+mam.final$species<-gsub(" ","",mam.final$value,fixed=TRUE)
+mam.final2 <- mam.final[which(mam.final$species!='f'&
+                                  mam.final$species!='m'&
+                                  mam.final$species!='o'&
+                                  mam.final$species!=''), ]
+#View(mam.final2)
+freq.table<-table(mam.final2$species)
+freq.table
+```
+##Exploratory analysis continued
+    Plotting
+    Lets use a numeric dataset for this exercise
+```{r}
+x1<-rnorm(100,50,1)
+x2<-rnorm(100,63,7)
+x3<-rnorm(100,22,19)
+x.data<-data.frame(cbind(x1,x2,x3))
+#View(x.data)
+```
+##Exploratory analysis continued
+    Plotting commands are simple
+```{r}
+plot(x1,x2)
+```
+##Exploratory analysis continued
+    Plotting commands are simple
+```{r}
+plot(x1,x3)
+```
+##Exploratory analysis continued
+    Plotting commands are simple
+```{r}
+hist(x1)
+```
+##Exploratory analysis continued
+    Changing figure text
+```{r}
+hist(x1,xlab="Number",ylab="Frequency",main="My Histogram")
+```
+##Regression
+    All linear models (regression, ANOVA, generalized, etc.) follow
+    same basic format in R
+    model<-lm(response~predictor,data=dataset) for linear reg.
+    or
+    model<-aov(response~predictor,data=dateset) for ANOVA models
+##Regression
+```{r}
+model1<-lm(x1~x3,data=x.data)
+```
+Use "summmary()" for results
+##Regression results
+```{r}
+summary(model1)
+```
+##Different options for including results on plot
+Make sure variable order is correct (predictor on x axis, listed first)
+```{r}
+plot(x3,x1)
+abline(model1)
+```
+
+##Different options for including results on plot
+Adding regression results to plot
+Use simple "text" command, with basic coordinates for location
+```{r}
+plot(x3,x1,main="Regression of x1 on x3")
+abline(model1)
+r.2<-summary(model1)$r.squared
+p.val<-summary(model1)$coefficients[2,4]
+text(52,52, labels = bquote(italic(R)^2))
+text(55,52,labels="=")
+text(60,52,substr(r.2,1,5))
+text(53,51.47,labels=bquote(italic(p)))
+text(65,51.5,labels="=")
+text(60,51.5,substr(p.val,1,5))
+```
+
+##Different options for including results on plot
+```{r,echo=FALSE}
+plot(x3,x1,main="Regression of x1 on x3")
+abline(model1)
+r.2<-summary(model1)$r.squared
+p.val<-summary(model1)$coefficients[2,4]
+text(52,52, labels = bquote(italic(R)^2))
+text(55,52,labels="=")
+text(60,52,substr(r.2,1,5))
+text(53,51.47,labels=bquote(italic(p)))
+text(65,51.5,labels="=")
+text(60,51.5,substr(p.val,1,5))
+```
+
+##Advanced visualization
+    GGplot2: histograms, lineplots
+    Violin plots
+```{r}
+#install.packages('ggplot2')
+library(ggplot2)
+```
+
+##Non-parametric statistics
+    #Friedman test, wilcoxon rank sign test
+
+

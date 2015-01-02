@@ -1,0 +1,43 @@
+---
+title: "Using Physical Habitat to Establish Restoration Objectives of Riparian Areas"
+author: "Jeff Lauder"
+date: "Wednesday, December 31, 2014"
+output: html_document
+---
+
+#Introduction
+Physical habitat (PHab) data can be used to establish quantitative restoration objectives.
+
+#Methods
+##Examples
+Here is an example of cleaned PHab data:
+```{r}
+PHab<- read.csv("E:/Documents/SSI/Projects/BMI Data/PHab Substrate Transects/Full PHab analysis/PHab 2008_10.csv")
+View(PHab)
+```
+
+
+Here is an example of what this data can tell us:
+```{r, echo=FALSE}
+#Exploring data:
+#simple boxplot of a variable by year:
+#boxplot is the function, and takes the form 'boxplot(variable~factor,data='dataset name')
+boxplot(Mean.Embed~Year,data=PHab)
+
+#simple scatterplots to examine how well semi-quantitative estimates
+#track more accurate measurements:
+```
+
+```{r}
+#Densiometer readings versus canopy cover estimates:
+plot(PHab$Canopy,PHab$Dens,ylab="Total Densiometer Cover",xlab="% Canopy cover estimate")
+abline(lm(PHab$Dens~PHab$Canopy))
+r.2<-summary(lm(PHab$Dens~PHab$Canopy))$r.squared
+p.val<-summary(lm(PHab$Dens~PHab$Canopy))$coefficients[2,4]
+text(40, 250, labels = bquote(italic(R)^2))
+text(42,250,labels="=")
+text(46,250,substr(r.2,1,5))
+text(40,210,labels=bquote(italic(p)))
+text(42,210,labels="=")
+text(46,210,substr(p.val,1,5))
+```
